@@ -1,0 +1,16 @@
+{
+  "name": "jumping-controller",
+  "version": "1.0.0",
+  "description": "A simple web interface for Parrot Jumping game",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index"
+  },
+  "author": "Alexandre Daubricourt",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.0",
+    "progressbar.js": "^1.0.1",
+    "socket.io": "^1.5.1"
+  }
+}

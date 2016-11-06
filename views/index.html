@@ -1,0 +1,227 @@
+
+<html>
+  <head>
+      <script type="text/javascript">
+          var speed = 0
+          var battery = 0
+          var keyboard = 'US'
+      </script>
+
+    <meta charset="utf-8">
+    <title>Sumo Web Controller</title>
+
+    <link rel="stylesheet" href="./views/normalize.css">
+    <link rel="stylesheet" href="./views/index.css">
+    <link href="https://fonts.googleapis.com/css?family=Exo:100" rel="stylesheet">
+
+    <!-- Progress -->
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css">
+    <script src="./node_modules/progressbar.js/dist/progressbar.min.js" charset="utf-8"></script>
+
+    <script src="./node_modules/socket.io/node_modules/socket.io-client/socket.io.js"> </script>
+  </head>
+  <body>
+
+      <div class="panel">
+
+          <div class="drone">
+
+              <div class="drone-card" style="width: 600px; height: 500px;">
+                  <h3 class="drone-card-title">Posture</h3>
+                  <br>
+                  <button type="button" id="btn-posture">Jumper</button>
+              </div>
+
+              <div class="drone-card">
+                  <h3 class="drone-card-title">Battery</h3>
+                  <div id="drone-battery-counter" class="drone-battery-counter"> </div>
+              </div>
+
+              <div class="drone-card" style="height: 400; width: 600; padding-left: 50px; padding-right: 50px; padding-bottom: 100px;">
+                  <h3 class="drone-card-title" style="padding-bottom: 40px;">Speed</h3>
+                  <div id="drone-speed-counter"> </div>
+              </div>
+
+              <div class="drone-card" style="width:400px;">
+                <h3 class="drone-card-title">Keyboard</h3>
+                <button type="button" id="btn" style="margin-left: 29%; margin-top: 8%;">FR</button>
+              </div>
+
+
+          </div>
+
+      </div>
+
+  </body>
+
+  <script type="text/javascript">
+        const socket = io()
+        var isKeyPressed = false
+        var isDoble = 0
+
+
+        let keyB = document.getElementById('btn')
+        keyB.onclick = (event) => {
+          if ( event['screenX'] != 0) {
+              if ( keyB.innerHTML == 'FR' ) keyboard = 'US'
+              else keyboard = 'FR'
+              keyB.innerHTML = keyboard
+          }
+        }
+
+        let posture = document.getElementById('btn-posture')
+        posture.innerHTML = 'Jumping'
+        posture.onclick = (event) => {
+            if ( event['screenX'] != 0 ) {
+              let newPosture
+              switch (posture.innerHTML) {
+                  case 'Jumping':
+                      socket.emit('posture', 'postureKicker')
+                      break;
+                  case 'Kicker':
+                      socket.emit('posture', 'postureStanding')
+                      break;
+                  case 'Standing':
+                      socket.emit('posture', 'postureJumper')
+                      break;
+              }
+            }
+        }
+        socket.emit('reqPosture')
+        socket.on('resPosture', (post) => { posture.innerHTML = post })
+
+        function keyPressed(event) {
+            let direction
+            event.preventDefault()
+            if (keyboard == 'FR') {
+              switch (event.key.toLowerCase()) {
+                  case 'z':
+                      direction = 'forward'
+                      break;
+                  case 'q':
+                      direction = 'left'
+                      break;
+                  case 's':
+                      direction = 'backward'
+                  break;
+                  case 'd':
+                      direction = 'right'
+                      break;
+                  case ' ':
+                      isDoble++
+                      // Check for double space, if user haven't pressed space since 250ms = long jump, else = hight jump
+                      setTimeout( () => { if ( isDoble == 1 ) { socket.emit('move', 'longJump'); isDoble = 0; console.log('Perform: Long jump') } }, 250)
+                      direction = undefined
+                      break;
+                  default:
+                      direction = undefined
+              }
+            } else {
+              switch (event.key.toLowerCase()) {
+                  case 'w':
+                      direction = 'forward'
+                      break;
+                  case 'a':
+                      direction = 'left'
+                      break;
+                  case 's':
+                      direction = 'backward'
+                  break;
+                  case 'd':
+                      direction = 'right'
+                      break;
+                  case ' ':
+                      isDoble++
+                      // Check for double space, if user haven't pressed space since 250ms = long jump, else = hight jump
+                      setTimeout( () => { if ( isDoble == 1 ) { socket.emit('move', 'longJump'); isDoble = 0; console.log('Perform: Long jump') } }, 250)
+                      direction = undefined
+                      break;
+                  default:
+                      direction = undefined
+              }
+            }
+            if ( direction ) { console.log('Go: ' + direction); socket.emit('move', direction) }
+
+        }
+
+        window.onload = () => {
+            window.addEventListener('keydown', (event) => { isKeyPressed = true; if (parseInt(speedBar.text.textContent[0]) == 0) speedBar.animate(.5) ; console.log() })
+            window.addEventListener('keypress', (event) => { keyPressed(event); isKeyPressed = true; } )
+            window.addEventListener('keyup', (event) => { socket.emit('stop'); speedBar.animate(0) })
+            setInterval( () => { if ( isDoble == 2 ) { socket.emit('move', 'hightJump'); isDoble = 0; console.log('Perform: Hight jump')} }, 100)
+
+            socket.on('battery', (data) => { batteryBar.animate(data) })
+        }
+    </script>
+
+    <script type="text/javascript">
+        var batteryBar = new ProgressBar.Circle('#drone-battery-counter', {
+        color: '#aaa',
+        // This has to be the same size as the maximum width to
+        // prevent clipping
+        strokeWidth: 10,
+        trailWidth: 1,
+        easing: 'easeInOut',
+        duration: 1400,
+        text: {
+          autoStyleContainer: false
+        },
+        from: { color: '#D91E18', width: 2 },
+        to: { color: '#2ECC71', width: 1 },
+        // Set default step function for all animate calls
+        step: function(state, circle) {
+          circle.path.setAttribute('stroke', state.color);
+          circle.path.setAttribute('stroke-width', state.width);
+
+          var value = Math.round(circle.value() * 100);
+          if (value === 0) {
+            circle.setText('Wait..');
+          } else {
+            circle.setText(value + '%');
+          }
+
+        }
+      });
+      batteryBar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+      batteryBar.text.style.fontSize = '2rem';
+      batteryBar.text.style.color = 'white';
+
+      batteryBar.animate(battery / 100);
+    </script>
+
+    <script type="text/javascript">
+        var speedBar = new ProgressBar.SemiCircle('#drone-speed-counter', {
+        strokeWidth: 2,
+        color: '#FFEA82',
+        trailColor: '#eee',
+        trailWidth: 1,
+        easing: 'easeInOut',
+        duration: 1400,
+        svgStyle: null,
+        text: {
+        value: '0 cm/s',
+        alignToBottom: false
+        },
+        from: { color: '#fff'},
+        to: { color: '#fff'},
+        // Set default step function for all animate calls
+        step: (state, bar) => {
+        bar.path.setAttribute('stroke', state.color);
+        var value = Math.round(bar.value() * 100 / 2);
+        if (value === 0) {
+          bar.setText('0 cm/s');
+        } else {
+          bar.setText(value + ' cm/s');
+        }
+
+        bar.text.style.color = state.color;
+        }
+        });
+        speedBar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+        speedBar.text.style.fontSize = '2rem';
+        speedBar.text.style.color = '#fff';
+
+        speedBar.animate(speed / 100);
+    </script>
+
+</html>

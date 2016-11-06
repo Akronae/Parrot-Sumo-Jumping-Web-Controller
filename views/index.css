@@ -1,0 +1,99 @@
+
+
+.drone-card {
+  height: 32%;
+  width: 600;
+  background: #189BFA;
+  color: white;
+  font-weight: 100;
+  transition: .2s ease-in;
+  float: left;
+  display: inline-block;
+  margin: 8px;
+}
+
+.drone-card:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.drone-card-title {
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 300;
+  color: white;
+  text-align: center;
+  font-size: 60px;
+}
+
+.drone-battery-counter {
+  margin: 20px;
+  width: 200px;
+  height: 200px;
+  position: relative;
+  display: inline-block;
+  margin-left: 32%;
+  color: white;
+}
+
+#btn-posture {
+  color: #189BFA;
+  background: none;
+  border: none;
+  height: 300px;
+  width: 300px;
+  padding: 10px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  border-radius: 4px;
+  margin-left: 24%;
+  margin-top: 4%;
+  font-size: 60px;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 100;
+}
+
+#btn-posture:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+#btn-posture:active {
+  box-shadow: none;
+}
+
+#btn {
+  color: #189BFA;
+  background: none;
+  border: none;
+  height: 150px;
+  width: 150px;
+  padding: 10px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  border-radius: 4px;
+  margin-left: 24%;
+  margin-top: 4%;
+  font-size: 40px;
+  font-family: 'Raleway', sans-serif;
+  font-weight: 100;
+}
+
+#btn:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+#btn:active {
+  box-shadow: none;
+}
+
+h3 {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+h4 {
+  margin: none;
+  font-size: 35px;
+  font-weight: 100;
+  font-family: 'Ubuntu', sans-serif;
+}
