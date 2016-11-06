@@ -4,4 +4,4 @@ use this code as you want, contact: alexr.daubricourt@gmail.com
 
 
 **Screen**
-![alt tag](http://www.hostingpics.net/viewer.php?id=174598Untitled.png)
+![alt tag](http://img4.hostingpics.net/thumbs/mini_174598Untitled.png)
